@@ -1,0 +1,196 @@
+<template>
+  <div>
+    <el-container>
+      <el-header style="text-align: center">
+        <el-date-picker
+          v-model="startTime"
+          type="date"
+          placeholder="开始日期">
+        </el-date-picker>
+        <el-date-picker
+          v-model="endTime"
+          type="date"
+          placeholder="结束日期">
+        </el-date-picker>
+        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+          查找
+        </el-button>
+      </el-header>
+      <!--中部      -->
+      <el-main>
+        <el-table
+          :data="tableData"
+          style="width: 100%;">
+          <el-table-column
+            label="发布时间"
+            width="180">
+            <template slot-scope="scope">
+              <i class="el-icon-time"></i>
+              <span style="margin-left: 10px">{{ scope.row.date }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="发布人"
+            width="180">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="top">
+                <p>姓名: {{ scope.row.name }}</p>
+                <p>住址: {{ scope.row.address }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">{{ scope.row.name }}</el-tag>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="评论类型"
+            width="180">
+            <template slot-scope="scope">
+              <span>{{ scope.row.type }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="ID"
+            width="180">
+            <template slot-scope="scope">
+              <span>{{ scope.row.id }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="标题"
+            width="180">
+            <template slot-scope="scope">
+              <span>{{ scope.row.title }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="内容"
+            width="180">
+            <template slot-scope="scope">
+              <el-popover trigger="hover" placement="top">
+                <p>{{ scope.row.content }}</p>
+                <div slot="reference" class="name-wrapper">
+                  <el-tag size="medium">预览</el-tag>
+                </div>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="状态"
+            width="180">
+            <template slot-scope="scope">
+              <el-tag type="success">正常</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="200">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                @click="handleFreeze(scope.$index, scope.row)">撤销</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+              >
+                <el-button
+                  size="mini"
+                  type="danger"
+                  slot="reference"
+                  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              </el-popconfirm>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-main>
+      <!--底部-->
+      <el-footer>
+        <div class="block">
+          <el-pagination
+            style="text-align:center;"
+            layout="total, prev, pager, next"
+            :total="5">
+          </el-pagination>
+        </div>
+      </el-footer>
+    </el-container>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Comments',
+  data() {
+    return {
+      startTime: '',
+      endTime: '',
+      query: "",
+      tableData: [{
+        type: '求购帖',
+        id: 'E9527',
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄',
+        comments: '5',
+        title: '求购二手手机',
+        content: '本人急需一台二手手机，有意者联系***********',
+        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      }, {
+        id: 'G9526',
+        type: '商品详情',
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄',
+
+
+        title: '二手手机',
+        content: '本人急需一台二手手机，有意者联系***********',
+        comments: '5',
+        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      }, {
+        id: 'G9526',
+        type: '商品详情',
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄',
+        comments: '5',
+        title: '二手手机',
+        content: '本人急需一台二手手机，有意者联系***********',
+        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      }, {
+        id: 'G9526',
+        type: '商品详情',
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄',
+        comments: '5',
+        title: '二手手机',
+        content: '本人急需一台二手手机，有意者联系***********',
+        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      }],
+
+    }
+  },
+  methods: {
+    handleFreeze(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    handleFilter() {
+      // todo
+    },
+    Init() {
+      // todo
+    }
+  },
+  beforeMount() {
+    this.Init()
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
