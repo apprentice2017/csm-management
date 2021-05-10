@@ -5,216 +5,312 @@
         <el-date-picker
           v-model="startTime"
           type="date"
-          placeholder="开始日期">
-        </el-date-picker>
+          placeholder="开始日期"
+        />
         <el-date-picker
           v-model="endTime"
           type="date"
-          placeholder="结束日期">
-        </el-date-picker>
-        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+          placeholder="结束日期"
+        />
+        <el-input
+          v-model="query"
+          placeholder="需要查找的信息"
+          style="width: 200px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
+        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
         </el-button>
       </el-header>
       <!--中部      -->
       <el-main>
         <el-table
-          :data="tableData"
-          border
-          style="width: 100%">
-          <el-table-column
-            label="创建日期"
-            width="180">
-            <template slot-scope="scope">
-              <i class="el-icon-time"></i>
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
+          :data="AfterChangeData"
+          style="width: 100%"
+        >
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-table
+                :data="props.row['goods']"
+                style="width: 100%"
+              >
+                <el-table-column
+                  width="100"
+                  prop="goodsId"
+                  label="物品编号"
+                />
+                <el-table-column
+                  prop="title"
+                  label="物品名称"
+                  width="180"
+                />
+                <el-table-column
+                  prop="description"
+                  label="物品描述"
+                  width="180"
+                />
+                <el-table-column
+                  label="物品封面"
+                  width="180"
+                >
+                  <template slot-scope="scope">
+                    <el-popover trigger="hover" placement="top">
+                      <el-image
+
+                        style="width: 100px; height: 100px"
+                        :src="scope.row.urlCover"
+                        fit="fit"
+                      />
+                      <div slot="reference" class="name-wrapper">
+                        <el-tag size="medium">图片预览</el-tag>
+                      </div>
+                    </el-popover>
+                  </template>
+                </el-table-column>
+
+                <el-table-column
+                  prop="currentPrice"
+                  label="当前价格"
+                  width="180"
+                />
+                <el-table-column
+                  prop="oldPrice"
+                  label="历史价格"
+                  width="180"
+                />
+                <el-table-column
+                  label="物品类别"
+                  width="180"
+                >
+                  <template slot-scope="props">
+
+                    <span>{{ props.row.categoryOne + '/' + props.row.categoryTwo }}</span>
+                  </template>
+                </el-table-column>
+
+                <el-table-column
+                  prop="tag"
+                  label="标签"
+                  width="180"
+                />
+              </el-table>
             </template>
           </el-table-column>
           <el-table-column
-            label="完成日期"
-            width="180">
-            <template slot-scope="scope">
-              <i class="el-icon-time"></i>
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
+            width="200"
+            label="父订单编号"
+            prop="outTradeNo"
+          />
+          <el-table-column
+            width="200"
+            label="子订单编号"
+            prop="subTradeNo"
+          />
+          <el-table-column
+            width="260"
+            label="支付宝编号"
+            prop="alipayId"
+          />
+          <el-table-column
+            label="创建时间"
+            width="170"
+          >
+            <template slot-scope="props">
+              <i class="el-icon-time"/>
+              <span>{{ props.row.createDate }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="卖家"
-            width="180">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
-                <p>姓名: {{ scope.row.name }}</p>
-                <p>住址: {{ scope.row.address }}</p>
+                <p>账号: {{ scope.row['seller'].account }}</p>
+                <p>学号: {{ scope.row['seller'].studentNo }}</p>
+                <p>支付宝账号: {{ scope.row['seller'].alipay }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ scope.row.name }}</el-tag>
+                  <el-tag size="medium">{{ scope.row.seller.name }}</el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column
             label="买家"
-            width="180">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
-                <p>姓名: {{ scope.row.name }}</p>
-                <p>住址: {{ scope.row.address }}</p>
+                <p>账号: {{ scope.row['buyer'].account }}</p>
+                <p>学号: {{ scope.row['buyer'].studentNo }}</p>
+                <p>支付宝账号: {{ scope.row['buyer'].alipay }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ scope.row.name }}</el-tag>
+                  <el-tag size="medium">{{ scope.row.buyer.name }}</el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column
-            label="标题"
-            width="180">
-            <template slot-scope="scope">
-              <span>{{ scope.row.title }}</span>
+            label="总金额"
+            width="100"
+          >
+            <template slot-scope="props">
+              <span>{{ props.row.totalAmount }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="内容"
-            width="180">
-            <template slot-scope="scope">
-              <el-popover trigger="hover" placement="top">
-                <p>{{ scope.row.content }}</p>
-                <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">预览</el-tag>
-                </div>
-              </el-popover>
+            label="子订单总金额"
+            width="150"
+          >
+            <template slot-scope="props">
+              <span>{{ props.row.subAmount }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="图片预览"
-            width="180">
+            label="订单状态"
+            width="100"
+          >
             <template slot-scope="scope">
-              <el-popover trigger="hover" placement="top">
-                <el-image
-                  style="width: 100px; height: 100px"
-                  :src="scope.row.url"
-                  :fit="fit"></el-image>
-                <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">图片预览</el-tag>
-                </div>
-              </el-popover>
+              <el-tag :type="scope.row.status !== 3 ? 'success' : 'danger'">
+                {{ message(scope.row.status) }}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column
-            label="价格"
-            width="180">
+            label="取消时间"
+            width="170"
+          >
             <template slot-scope="scope">
-              <span>{{ scope.row.price }}</span>
+              <i class="el-icon-time"/>
+              <span>{{ scope.row.cancelDate }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="状态"
-            width="180">
+            label="完成时间"
+            width="170"
+          >
             <template slot-scope="scope">
-              <el-tag type="success">已完成</el-tag>
+              <i class="el-icon-time"/>
+              <span>{{ scope.row.finishedDate }}</span>
             </template>
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
-            width="100">
+            width="200"
+          >
+            <template slot="header" slot-scope="scope">
+              <el-input
+                v-model="search"
+                size="mini"
+                placeholder="输入关键字搜索"
+              />
+            </template>
             <template slot-scope="scope">
-              <el-button @click="handleBan(scope.row)" type="text" size="small">查看详情</el-button>
+              <el-button type="text" size="small" @click="handleCancel(scope.row.subTradeNo)">取消订单</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+                @onConfirm="handleDelete(scope.row.orderId)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="danger"
+                >删除
+                </el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
       </el-main>
       <!--底部-->
       <el-footer>
-        <div class="block">
-          <el-pagination
-            style="text-align:center;"
-            layout="total, prev, pager, next"
-            :total="5">
-          </el-pagination>
-        </div>
+        <el-pagination
+          style="text-align:center;"
+          :page-size="pageSize"
+          :current-page="currentPage"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalCount"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
       </el-footer>
     </el-container>
   </div>
 </template>
 
 <script>
+import { allOrders, cancelOrder, removeOrder } from '@/api/orders'
+
 export default {
   name: 'Order',
   data() {
     return {
       startTime: '',
       endTime: '',
-      query: "",
-      tableData: [{
-        price: '1249',
-        oldPrice: '2499',
-        category: '数码/手机',
-        collect: '55',
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        comments: '5',
-        title: '二手手机',
-        content: '本人急需转出一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        price: '1249',
-        oldPrice: '2499',
-        category: '数码/手机',
-        collect: '55',
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-
-
-        title: '二手手机',
-        content: '本人急需转出一台二手手机，有意者联系***********',
-        comments: '5',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        price: '1249',
-        oldPrice: '2499',
-        category: '数码/手机',
-        collect: '55',
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        comments: '5',
-        title: '二手手机',
-        content: '本人急需转出一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        price: '1249',
-        oldPrice: '2499',
-        category: '数码/手机',
-        collect: '55',
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        comments: '5',
-        title: '二手手机',
-        content: '本人急需转出一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }],
-
+      query: '',
+      tableData: [],
+      currentPage: 1,
+      totalCount: null,
+      pageSize: 10,
+      pageNo: null,
+      status: ['待支付', '已支付', '已完成', '已取消'],
+      search: ''
     }
   },
-  methods: {
-    handleBan(index, row) {
-      console.log(index, row);
-    },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
-    handleFilter() {
-      // todo
-    },
-    Init() {
-      // todo
+  computed: {
+    AfterChangeData() {
+      const start = (this.currentPage - 1) * this.pageSize
+      const end = this.currentPage * this.pageSize
+      const result = this.tableData.filter(data => !this.search ||
+        data.outTradeNo.toLowerCase().includes(this.search.toLowerCase())
+      )
+      this.totalCount = result.length
+      return result.slice(start, end)
     }
   },
   beforeMount() {
-    this.Init()
+    this.loadData()
+  },
+  methods: {
+    loadData() {
+      allOrders({
+        startDate: this.startTime,
+        endDate: this.endTime, search: this.query
+      }).then(res => {
+        const { result } = res
+        this.tableData = result.orders
+        this.totalCount = result.totalCount
+
+        console.log(this.tableData)
+      })
+    },
+    // 分页大小改变
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    // 当前页数改变
+    handleCurrentChange(val) {
+      this.currentPage = val
+    },
+    handleFilter() {
+      this.loadData()
+    },
+    handleCancel(row) {
+      cancelOrder({ OrderId: row, type: 'sub_trade_no' }).then(res => {
+        this.$message(res.msg)
+      })
+    },
+    handleDelete(orderId) {
+      removeOrder(orderId).then(res => {
+
+        this.$message(res.msg)
+      })
+    },
+    message(item) {
+      return this.status[item]
+    }
   }
 }
 </script>

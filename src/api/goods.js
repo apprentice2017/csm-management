@@ -18,7 +18,7 @@ export function updateGoods(data) {
   })
 }
 
-// 删除用户
+// 删除物品
 
 export function removeGoods(goodsId) {
   return request({
