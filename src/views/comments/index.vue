@@ -13,7 +13,7 @@
           placeholder="结束日期"
         />
         <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
         </el-button>
       </el-header>
@@ -24,91 +24,94 @@
           style="width: 100%;"
         >
           <el-table-column
+            label="留言id"
+            width="110"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row.comment_id }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             label="发布时间"
             width="180"
           >
             <template slot-scope="scope">
               <i class="el-icon-time" />
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
+              <span style="margin-left: 10px">{{ scope.row.create_date }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="发布人"
-            width="180"
+            width="100"
           >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
-                <p>姓名: {{ scope.row.name }}</p>
-                <p>住址: {{ scope.row.address }}</p>
+                <p>姓名: {{ scope.row['user'].name }}</p>
+                <p>账号: {{ scope.row['user'].account }}</p>
+                <p>支付宝账号: {{ scope.row['user'].alipay }}</p>
                 <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ scope.row.name }}</el-tag>
+                  <el-tag size="medium">{{ scope.row['user'].name }}</el-tag>
                 </div>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column
             label="评论类型"
-            width="180"
+            width="100"
           >
             <template slot-scope="scope">
-              <span>{{ scope.row.type }}</span>
+              <span>{{ scope.row.type === 1 ? '求购' : '物品' }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="ID"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.id }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="标题"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.title }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
+            prop="content"
             label="内容"
             width="180"
           >
-            <template slot-scope="scope">
-              <el-popover trigger="hover" placement="top">
-                <p>{{ scope.row.content }}</p>
-                <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">预览</el-tag>
-                </div>
-              </el-popover>
-            </template>
           </el-table-column>
           <el-table-column
-            label="状态"
+            label="对象标题"
             width="180"
           >
             <template slot-scope="scope">
-              <el-tag type="success">正常</el-tag>
+              <span>{{ scope.row['object'].title }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="对象描述"
+            width="180"
+          >
+            <template slot-scope="scope">
+              <span>{{ scope.row['object'].description }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
-            width="200"
+            width="300"
           >
             <template slot-scope="scope">
               <el-button
+                slot="reference"
                 size="mini"
-                @click="handleFreeze(scope.$index, scope.row)"
-              >撤销</el-button>
+                type="primary"
+                @click="handleUser(scope.row['user'])"
+              >该用户留言</el-button>
+              <el-button
+                slot="reference"
+                size="mini"
+                type="primary"
+                @click="handleObject(scope.row)"
+              >该对象留言</el-button>
               <el-popconfirm
                 title="确定删除吗？"
+                @onConfirm="handleDelete(scope.row)"
               >
                 <el-button
                   slot="reference"
                   size="mini"
                   type="danger"
-                  @click="handleDelete(scope.$index, scope.row)"
-                >删除</el-button>
+                >删除
+                </el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -120,7 +123,10 @@
           <el-pagination
             style="text-align:center;"
             layout="total, prev, pager, next"
-            :total="5"
+            :current-page="current_page"
+            :page-count="totalPage"
+            :total="totalCount"
+            @current-change="pageChange"
           />
         </div>
       </el-footer>
@@ -129,6 +135,8 @@
 </template>
 
 <script>
+import { allComments, removeComment } from '@/api/comments'
+
 export default {
   name: 'Comments',
   data() {
@@ -136,65 +144,63 @@ export default {
       startTime: '',
       endTime: '',
       query: '',
-      tableData: [{
-        type: '求购帖',
-        id: 'E9527',
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        comments: '5',
-        title: '求购二手手机',
-        content: '本人急需一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        id: 'G9526',
-        type: '商品详情',
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        title: '二手手机',
-        content: '本人急需一台二手手机，有意者联系***********',
-        comments: '5',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        id: 'G9526',
-        type: '商品详情',
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        comments: '5',
-        title: '二手手机',
-        content: '本人急需一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }, {
-        id: 'G9526',
-        type: '商品详情',
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        comments: '5',
-        title: '二手手机',
-        content: '本人急需一台二手手机，有意者联系***********',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
-      }]
-
+      tableData: [],
+      current_page: 1,
+      totalPage: null,
+      totalCount: null,
+      userId: null,
+      type: null,
+      item: null,
+      flag: false
     }
   },
   beforeMount() {
-    this.Init()
+    this.loadData()
   },
   methods: {
-    handleFreeze(index, row) {
-      console.log(index, row)
+    loadData() {
+      allComments({
+        page: this.current_page, size: 10, startDate: this.startTime, user: this.flag,
+        endDate: this.endTime, search: this.query, userId: this.userId, objectId: this.item,
+        type: this.type
+      }).then(res => {
+        const { result } = res
+
+        console.log(res)
+        this.tableData = result.comments
+        this.totalPage = result.totalPage
+        this.totalCount = result.totalCount
+
+      })
     },
-    handleDelete(index, row) {
-      console.log(index, row)
+    handleDelete(row) {
+      removeComment(row.comment_id).then(res => {
+        this.$message(res.msg)
+        this.loadData()
+      })
     },
     handleFilter() {
-      // todo
+      this.current_page = 1
+      this.loadData()
+      this.type = null
+      this.userId = null
+      this.objectId = null
     },
-    Init() {
-      // todo
+    pageChange(val) {
+      this.current_page = val
+      this.loadData()
+    },
+    handleUser(row) {
+      this.userId = row.userId
+      this.handleFilter()
+    },
+    handleObject(row) {
+      this.type = row.type
+      const object = this.type === 1 ? 'goodsId' : 'essayId'
+      console.log(row.object['goodsId'])
+      this.item = row.object[object]
+      console.log(this.type+'/'+this.item+'/')
+      this.handleFilter()
     }
   }
 }

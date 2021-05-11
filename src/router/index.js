@@ -118,12 +118,20 @@ export const constantRoutes = [
     path: '/mobileWeb',
     component: Layout,
     redirect: '/mobileWeb',
+    meta: { title: '客户端信息', icon: 'nested' },
     children: [{
       /**/
-      path: 'mobileWeb',
-      name: 'MobileWeb',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '客户端信息', icon: 'nested' }
+      path: 'category',
+      name: 'category',
+      component: () => import('@/views/mobileWeb/category/index.vue'),
+      meta: { title: '分类信息', icon: 'table' }
+    },
+    {
+      /**/
+      path: 'swiper',
+      name: 'swiper',
+      component: () => import('@/views/mobileWeb/swiper/index.vue'),
+      meta: { title: '轮播图信息', icon: 'table' }
     }]
   },
   // {
