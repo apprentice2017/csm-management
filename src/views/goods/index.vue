@@ -5,13 +5,13 @@
         <el-date-picker
           v-model="startTime"
           type="date"
-          placeholder="开始日期">
-        </el-date-picker>
+          placeholder="开始日期"
+        />
         <el-date-picker
           v-model="endTime"
           type="date"
-          placeholder="结束日期">
-        </el-date-picker>
+          placeholder="结束日期"
+        />
         <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
@@ -22,25 +22,29 @@
         <el-table
           :data="tableData"
           border
-          style="width: 100%">
+          style="width: 100%"
+        >
           <el-table-column
             label="用户编号"
-            width="50">
+            width="50"
+          >
             <template slot-scope="scope">
               <span style="margin-left: 10px">{{ scope.row.goods_id }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="创建日期"
-            width="180">
+            width="180"
+          >
             <template slot-scope="scope">
-              <i class="el-icon-time"></i>
+              <i class="el-icon-time" />
               <span style="margin-left: 10px">{{ scope.row.create_date }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="发布人"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
                 <p>账号: {{ scope.row.account }}</p>
@@ -55,21 +59,24 @@
 
           <el-table-column
             label="类别"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.category_one + '/' + scope.row.category_two }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="标题"
-            width="180">
+            width="180"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.title }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="内容"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
                 <p>{{ scope.row.description }}</p>
@@ -81,13 +88,15 @@
           </el-table-column>
           <el-table-column
             label="图片预览"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-popover trigger="hover" placement="top">
                 <el-image
                   style="width: 100px; height: 100px"
                   :src="scope.row.url_cover"
-                  fit="fit"></el-image>
+                  fit="fit"
+                />
                 <div slot="reference" class="name-wrapper">
                   <el-tag size="medium">图片预览</el-tag>
                 </div>
@@ -96,49 +105,56 @@
           </el-table-column>
           <el-table-column
             label="价格"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.current_price }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="原价"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.old_price }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="标签"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.tag }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="收藏数"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.collect_count }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="评论数"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
-              <span>{{ scope.row.comments_count}}</span>
+              <span>{{ scope.row.comments_count }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="修改时间"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
-              <span>{{ scope.row.update_date}}</span>
+              <span>{{ scope.row.update_date }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="状态"
-            width="100">
+            width="100"
+          >
             <template slot-scope="scope">
               <el-tag :type="scope.row.is_sold_out === 0 && scope.row.is_dealing === 0? 'success' : 'danger'">{{ message(scope.row) }}</el-tag>
             </template>
@@ -146,7 +162,8 @@
           <el-table-column
             fixed="right"
             label="操作"
-            width="150">
+            width="150"
+          >
             <template slot-scope="scope">
               <el-popconfirm
                 title="确定下架吗？"
@@ -213,9 +230,11 @@ export default {
       allGoods({ page: this.current_page, size: 10, startDate: this.startTime,
         endDate: this.endTime, title: this.query }).then(res => {
         const { result } = res
-        this.tableData = result.goods
-        this.totalPage = result.totalPage
-        this.totalCount = result.totalCount
+        if (result.goods != null) {
+          this.tableData = result.goods
+          this.totalPage = result.totalPage
+          this.totalCount = result.totalCount
+        }
 
         console.log(this.tableData)
       })
