@@ -65,8 +65,8 @@
                 <el-form-item label="是否展示">
                   <el-switch
                     v-model="form.isSelect"
-                    active-value="1"
-                    inactive-value="0"
+                    :active-value="1"
+                    :inactive-value="0"
                   />
                 </el-form-item>
                 <el-form-item>
