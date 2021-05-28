@@ -31,70 +31,58 @@
         >
           <el-table-column type="expand">
             <template slot-scope="props">
-              <el-table
-                :data="props.row['goods']"
-                style="width: 100%"
-              >
-                <el-table-column
-                  width="100"
-                  prop="goodsId"
-                  label="物品编号"
-                />
-                <el-table-column
-                  prop="title"
-                  label="物品名称"
-                  width="180"
-                />
-                <el-table-column
-                  prop="description"
-                  label="物品描述"
-                  width="180"
-                />
-                <el-table-column
-                  label="物品封面"
-                  width="180"
-                >
-                  <template slot-scope="scope">
-                    <el-popover trigger="hover" placement="top">
-                      <el-image
+              <el-row type="flex">
+                <el-col :span="3" v-for="o in props.row['goods']">
+                  <el-card :body-style="{ padding: '0px' }">
+                    <img :src="o.urlCover" class="image">
+                    <div style="padding: 14px;">
+                      <span>{{ o.title }}</span>
+                      <div class="bottom clearfix">
+                        <time class="time">{{ o.createDate }}</time>
+                        <el-popover
+                          placement="right"
+                          width="400"
+                          trigger="click"
+                        >
+                          <el-form ref="form" :model="o" label-width="100px">
+                            <template>
+                              <el-carousel :interval="4000" height="200px">
+                                <el-carousel-item
+                                  v-for="item in JSON.parse(o.url).map(res=>{return res.url})"
+                                  :key="item"
+                                  style="text-align: center"
+                                >
+                                  <img :src="item" style="height: 100%"/>
+                                </el-carousel-item>
+                              </el-carousel>
+                            </template>
+                            <el-form-item label="物品名称">
+                              <el-input v-model="o.title" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="描述">
+                              <el-input v-model="o.description" type="textarea" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="现价">
+                              <el-input v-model="o.currentPrice" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="原价">
+                              <el-input v-model="o.oldPrice" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="类别">
+                              <el-input  :value="o.categoryOne+'/'+o.categoryTwo" :disabled="true"></el-input>
+                            </el-form-item>
+                            <el-form-item label="标签">
+                              <el-input v-model="o.tag" :disabled="true"></el-input>
+                            </el-form-item>
+                          </el-form>
 
-                        style="width: 100px; height: 100px"
-                        :src="scope.row.urlCover"
-                        fit="fit"
-                      />
-                      <div slot="reference" class="name-wrapper">
-                        <el-tag size="medium">图片预览</el-tag>
+                          <el-button type="text" class="button" slot="reference">查看详情</el-button>
+                        </el-popover>
                       </div>
-                    </el-popover>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  prop="currentPrice"
-                  label="当前价格"
-                  width="180"
-                />
-                <el-table-column
-                  prop="oldPrice"
-                  label="历史价格"
-                  width="180"
-                />
-                <el-table-column
-                  label="物品类别"
-                  width="180"
-                >
-                  <template slot-scope="props">
-
-                    <span>{{ props.row.categoryOne + '/' + props.row.categoryTwo }}</span>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  prop="tag"
-                  label="标签"
-                  width="180"
-                />
-              </el-table>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
             </template>
           </el-table-column>
           <el-table-column
@@ -316,5 +304,33 @@ export default {
 </script>
 
 <style scoped>
+.time {
+  font-size: 13px;
+  color: #999;
+}
 
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.button {
+  padding: 0;
+  float: right;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
+}
 </style>
