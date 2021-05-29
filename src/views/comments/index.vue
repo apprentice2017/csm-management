@@ -12,8 +12,10 @@
           type="date"
           placeholder="结束日期"
         />
-        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-button  class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item"
+                  @keyup.enter.native="handleFilter"
+        />
+        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
         </el-button>
       </el-header>
@@ -36,7 +38,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <i class="el-icon-time" />
+              <i class="el-icon-time"/>
               <span style="margin-left: 10px">{{ scope.row.create_date }}</span>
             </template>
           </el-table-column>
@@ -95,13 +97,15 @@
                 size="mini"
                 type="primary"
                 @click="handleUser(scope.row['user'])"
-              >该用户留言</el-button>
+              >该用户留言
+              </el-button>
               <el-button
                 slot="reference"
                 size="mini"
                 type="primary"
                 @click="handleObject(scope.row)"
-              >该对象留言</el-button>
+              >该对象留言
+              </el-button>
               <el-popconfirm
                 title="确定删除吗？"
                 @onConfirm="handleDelete(scope.row)"
@@ -165,7 +169,6 @@ export default {
         type: this.type
       }).then(res => {
         const { result } = res
-
         console.log(res)
         this.tableData = result.comments
         this.totalPage = result.totalPage
@@ -199,7 +202,7 @@ export default {
       const object = this.type === 1 ? 'goodsId' : 'essayId'
       console.log(row.object['goodsId'])
       this.item = row.object[object]
-      console.log(this.type+'/'+this.item+'/')
+      console.log(this.type + '/' + this.item + '/')
       this.handleFilter()
     }
   }

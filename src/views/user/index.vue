@@ -229,8 +229,8 @@ export default {
       return string
     },
     filterTag(value, row) {
-      return this.message(row) === value;
-    },
+      return this.message(row) === value
+    }
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-container>
-      <el-header style="text-align: center" />
+      <el-header style="text-align: center"/>
       <!--中部      -->
       <div class="block" style="width: 40%; margin: 0 auto 0 auto">
         <span class="demonstration" style="display: block;text-align: center">样式展示模拟</span>
@@ -21,7 +21,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <i class="el-icon-time" />
+              <i class="el-icon-time"/>
               <span style="margin-left: 10px">{{ scope.row.createDate }}</span>
             </template>
           </el-table-column>
@@ -64,7 +64,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="二级类别">
-                    <el-input v-model="form.categoryTwo" />
+                    <el-input v-model="form.categoryTwo"/>
                   </el-form-item>
                   <el-form-item label="是否展示">
                     <el-switch
@@ -91,7 +91,7 @@
               >
                 <el-form ref="form" :model="form" label-width="80px">
                   <el-form-item label="二级类别">
-                    <el-input v-model="form.categoryTwo" />
+                    <el-input v-model="form.categoryTwo"/>
                   </el-form-item>
                   <el-form-item>
                     <el-button type="primary" @click="handleAddOne">立即创建</el-button>
@@ -118,9 +118,9 @@
           </el-table-column>
         </el-table>
       </div>
-      <el-main />
+      <el-main/>
       <!--底部-->
-      <el-footer />
+      <el-footer/>
     </el-container>
   </div>
 </template>

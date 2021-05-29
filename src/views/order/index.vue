@@ -32,7 +32,7 @@
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-row type="flex">
-                <el-col :span="3" v-for="o in props.row['goods']">
+                <el-col :span="3" v-for="(o,key) in props.row['goods']" :key="key">
                   <el-card :body-style="{ padding: '0px' }">
                     <img :src="o.urlCover" class="image">
                     <div style="padding: 14px;">
