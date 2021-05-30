@@ -12,8 +12,12 @@
           type="date"
           placeholder="结束日期"
         />
-        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item"
-                  @keyup.enter.native="handleFilter"
+        <el-input
+          v-model="query"
+          placeholder="需要查找的信息"
+          style="width: 200px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
         />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
@@ -24,6 +28,7 @@
         <el-table
           :data="tableData"
           style="width: 100%;"
+          :row-class-name="tableRowClassName"
         >
           <el-table-column
             label="留言id"
@@ -69,8 +74,7 @@
             prop="content"
             label="内容"
             width="180"
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="对象标题"
             width="180"
@@ -88,23 +92,39 @@
             </template>
           </el-table-column>
           <el-table-column
+            label="敏感内容"
+            width="100"
+            prop="sensitive_content"
+          />
+          <el-table-column
+            fixed="right"
             label="操作"
             width="300"
           >
+
+            <template slot="header" slot-scope="scope">
+              只看敏感
+              <el-switch
+                v-model="sensitive"
+                active-value="1"
+                inactive-value="0"
+              >
+              </el-switch>
+            </template>
             <template slot-scope="scope">
               <el-button
                 slot="reference"
                 size="mini"
                 type="primary"
                 @click="handleUser(scope.row['user'])"
-              >该用户留言
+              >该用户
               </el-button>
               <el-button
                 slot="reference"
                 size="mini"
                 type="primary"
                 @click="handleObject(scope.row)"
-              >该对象留言
+              >该对象
               </el-button>
               <el-popconfirm
                 title="确定删除吗？"
@@ -155,25 +175,30 @@ export default {
       userId: null,
       type: null,
       item: null,
-      flag: false
+      flag: false,
+      sensitive: null
     }
   },
   beforeMount() {
     this.loadData()
+  },
+  watch: {
+    sensitive: function(val) {
+      this.loadData()
+    }
   },
   methods: {
     loadData() {
       allComments({
         page: this.current_page, size: 10, startDate: this.startTime, user: this.flag,
         endDate: this.endTime, search: this.query, userId: this.userId, objectId: this.item,
-        type: this.type
+        type: this.type, sensitive: this.sensitive
       }).then(res => {
         const { result } = res
         console.log(res)
         this.tableData = result.comments
         this.totalPage = result.totalPage
         this.totalCount = result.totalCount
-
       })
     },
     handleDelete(row) {
@@ -204,11 +229,19 @@ export default {
       this.item = row.object[object]
       console.log(this.type + '/' + this.item + '/')
       this.handleFilter()
+    },
+    tableRowClassName({ row }) {
+      if (row.is_sensitive === 1) {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style>
+.el-table .warning-row {
+  background: oldlace;
+}
 </style>

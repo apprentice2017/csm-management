@@ -26,7 +26,7 @@
       <!--中部      -->
       <el-main>
         <el-table
-          :data="tableData"
+          :data="AfterChangeData"
           border
           style="width: 100%"
         >
@@ -250,11 +250,12 @@
         <div class="block">
           <el-pagination
             style="text-align:center;"
-            layout="total, prev, pager, next"
+            layout="total, sizes, prev, pager, next, jumper"
             :current-page="current_page"
-            :page-count="totalPage"
+            :page-size="pageSize"
             :total="totalCount"
-            @current-change="pageChange"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
           />
         </div>
       </el-footer>
@@ -275,7 +276,18 @@ export default {
       tableData: [],
       current_page: 1,
       totalPage: null,
-      totalCount: null
+      totalCount: null,
+      pageSize: 10
+    }
+  },
+  computed: {
+    AfterChangeData() {
+      const start = (this.current_page - 1) * this.pageSize
+      const end = this.current_page * this.pageSize
+      const result = this.tableData
+      this.totalCount = result.length
+      console.log(result.slice(start, end))
+      return result.slice(start, end)
     }
   },
   beforeMount() {
@@ -284,22 +296,17 @@ export default {
   methods: {
     loadData() {
       allGoods({
-        page: this.current_page, size: 10, startDate: this.startTime,
+        startDate: this.startTime,
         endDate: this.endTime, title: this.query
       }).then(res => {
         const { result } = res
         if (result.goods != null) {
           this.tableData = result.goods
-          this.totalPage = result.totalPage
-          this.totalCount = result.totalCount
         }
-
-        console.log(this.tableData)
       })
     },
     handleBan(row) {
       updateGoods({ goodsId: row.goods_id, isSoldOut: 1 }).then(res => {
-        console.log(res)
         this.$message(res.msg)
         this.loadData()
       })
@@ -316,7 +323,14 @@ export default {
     },
     pageChange(val) {
       this.current_page = val
-      this.loadData()
+    },
+    // 分页大小改变
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    // 当前页数改变
+    handleCurrentChange(val) {
+      this.current_page = val
     },
     message(item) {
       let string = '正常'

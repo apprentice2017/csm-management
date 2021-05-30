@@ -28,6 +28,7 @@
         <el-table
           :data="tableData"
           style="width: 100%;"
+          :row-class-name="tableRowClassName"
         >
           <el-table-column
             label="求购编号"
@@ -42,7 +43,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <i class="el-icon-time" />
+              <i class="el-icon-time"/>
               <span style="margin-left: 10px">{{ scope.row.createDate }}</span>
             </template>
           </el-table-column>
@@ -123,6 +124,11 @@
               <span>{{ scope.row.updateDate }}</span>
             </template>
           </el-table-column>
+          <el-table-column
+            label="敏感内容"
+            width="100"
+            prop="sensitiveContent"
+          />
           <el-table-column
             label="类型"
             width="100"
@@ -215,6 +221,12 @@ export default {
     pageChange(val) {
       this.current_page = val
       this.loadData()
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.isSensitive === 1) {
+        return 'warning-row'
+      }
+      return ''
     }
   }
 }
