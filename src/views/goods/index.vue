@@ -12,7 +12,13 @@
           type="date"
           placeholder="结束日期"
         />
-        <el-input v-model="query" placeholder="需要查找的信息" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+        <el-input
+          v-model="query"
+          placeholder="需要查找的信息"
+          style="width: 200px;"
+          class="filter-item"
+          @keyup.enter.native="handleFilter"
+        />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           查找
         </el-button>
@@ -156,15 +162,63 @@
             width="100"
           >
             <template slot-scope="scope">
-              <el-tag :type="scope.row.is_sold_out === 0 && scope.row.is_dealing === 0? 'success' : 'danger'">{{ message(scope.row) }}</el-tag>
+              <el-tag :type="scope.row.is_sold_out === 0 && scope.row.is_dealing === 0? 'success' : 'danger'">
+                {{ message(scope.row) }}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
-            width="150"
+            width="200"
           >
-            <template slot-scope="scope">
+
+            <template slot-scope="scope" >
+              <el-popover
+                placement="right"
+                width="400"
+                trigger="click"
+              >
+                <el-form ref="form" :model="scope.row" label-width="100px">
+                  <template>
+                    <el-carousel :interval="4000" height="200px">
+                      <el-carousel-item
+                        v-for="item in JSON.parse(scope.row.url).map(res=>{return res.url})"
+                        :key="item"
+                        style="text-align: center"
+                      >
+                        <img :src="item" style="height: 100%">
+                      </el-carousel-item>
+                    </el-carousel>
+                  </template>
+                  <el-form-item label="物品名称">
+                    <el-input v-model="scope.row.title" :disabled="true" />
+                  </el-form-item>
+                  <el-form-item label="描述">
+                    <el-input v-model="scope.row.description" type="textarea" :disabled="true" />
+                  </el-form-item>
+                  <el-form-item label="现价">
+                    <el-input v-model="scope.row.current_price" :disabled="true" />
+                  </el-form-item>
+                  <el-form-item label="原价">
+                    <el-input v-model="scope.row.old_price" :disabled="true" />
+                  </el-form-item>
+                  <el-form-item label="类别">
+                    <el-input :value="scope.row.category_one+'/'+scope.row.category_two" :disabled="true" />
+                  </el-form-item>
+                  <el-form-item label="标签">
+                    <el-input v-model="scope.row.tag" :disabled="true" />
+                  </el-form-item>
+                </el-form>
+
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="success"
+                  class="button"
+                >详情
+                </el-button>
+              </el-popover>
               <el-popconfirm
                 title="确定下架吗？"
                 @onConfirm="handleBan(scope.row)"
@@ -173,7 +227,8 @@
                   slot="reference"
                   size="mini"
                   type="primary"
-                >下架</el-button>
+                >下架
+                </el-button>
               </el-popconfirm>
               <el-popconfirm
                 title="确定删除吗？"
@@ -183,7 +238,8 @@
                   slot="reference"
                   size="mini"
                   type="danger"
-                >删除</el-button>
+                >删除
+                </el-button>
               </el-popconfirm>
             </template>
           </el-table-column>
@@ -227,8 +283,10 @@ export default {
   },
   methods: {
     loadData() {
-      allGoods({ page: this.current_page, size: 10, startDate: this.startTime,
-        endDate: this.endTime, title: this.query }).then(res => {
+      allGoods({
+        page: this.current_page, size: 10, startDate: this.startTime,
+        endDate: this.endTime, title: this.query
+      }).then(res => {
         const { result } = res
         if (result.goods != null) {
           this.tableData = result.goods

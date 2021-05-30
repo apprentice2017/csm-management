@@ -6,11 +6,13 @@
           v-model="startTime"
           type="date"
           placeholder="开始日期"
+          value-format="yyyy-MM-dd"
         />
         <el-date-picker
           v-model="endTime"
           type="date"
           placeholder="结束日期"
+          value-format="yyyy-MM-dd"
         />
         <el-input
           v-model="query"
@@ -69,7 +71,7 @@
                               <el-input v-model="o.oldPrice" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item label="类别">
-                              <el-input  :value="o.categoryOne+'/'+o.categoryTwo" :disabled="true"></el-input>
+                              <el-input :value="o.categoryOne+'/'+o.categoryTwo" :disabled="true"></el-input>
                             </el-form-item>
                             <el-form-item label="标签">
                               <el-input v-model="o.tag" :disabled="true"></el-input>
@@ -199,7 +201,7 @@
               <el-button type="text" size="small" @click="handleCancel(scope.row.subTradeNo)">取消订单</el-button>
               <el-popconfirm
                 title="确定删除吗？"
-                @onConfirm="handleDelete(scope.row.orderId)"
+                @onConfirm="handleDelete(scope.row)"
               >
                 <el-button
                   slot="reference"
@@ -270,8 +272,6 @@ export default {
         const { result } = res
         this.tableData = result.orders
         this.totalCount = result.totalCount
-
-        console.log(this.tableData)
       })
     },
     // 分页大小改变
@@ -290,10 +290,12 @@ export default {
         this.$message(res.msg)
       })
     },
-    handleDelete(orderId) {
-      removeOrder(orderId).then(res => {
-
+    handleDelete(row) {
+      removeOrder(row.orderId).then(res => {
         this.$message(res.msg)
+        if (res.code === '201') {
+          this.loadData()
+        }
       })
     },
     message(item) {

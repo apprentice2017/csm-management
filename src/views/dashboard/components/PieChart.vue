@@ -55,7 +55,7 @@ export default {
       this.chart = this.$echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
     },
-    setOptions({ name,category, actualData } = {}) {
+    setOptions({ name, category, actualData } = {}) {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',
