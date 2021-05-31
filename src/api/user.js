@@ -52,3 +52,12 @@ export function removeUser(userId) {
     method: 'get'
   })
 }
+
+// 降低信誉分
+
+export function reduceUser(data) {
+  return request({
+    url: '/api/user/reduce?' + qs.stringify(data),
+    method: 'get'
+  })
+}

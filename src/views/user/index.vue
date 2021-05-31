@@ -134,7 +134,7 @@
                 size="mini"
                 slot="reference"
                 type="success"
-                @click="handleActive(scope.row.userId)"
+                @click="handleActive(scope.row)"
               >激活
               </el-button>
               <el-popconfirm
@@ -219,8 +219,13 @@ export default {
         this.loadData()
       })
     },
-    handleActive(userId) {
-      update({ isFreeze: 0, isActive: 1, userId: userId }).then(res => {
+    handleActive(row) {
+      update({
+        isFreeze: 0,
+        isActive: 1,
+        userId: row.userId,
+        creditPoints: row.creditPoints < 60 ? row.creditPoints : row.creditPoints + 10
+      }).then(res => {
         this.$message(res.msg)
         this.loadData()
       })

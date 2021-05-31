@@ -176,6 +176,7 @@
 
 <script>
 import { allEssay, removeEssay } from '@/api/essay'
+import { reduceUser } from '@/api/user'
 
 export default {
   name: 'Essay',
@@ -211,6 +212,7 @@ export default {
     handleDelete(row) {
       removeEssay(row.essay_id).then(res => {
         this.$message(res.msg)
+        reduceUser({ userId: row.user_id, num: 5 })
         this.loadData()
       })
     },

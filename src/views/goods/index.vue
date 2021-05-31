@@ -43,7 +43,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <i class="el-icon-time" />
+              <i class="el-icon-time"/>
               <span style="margin-left: 10px">{{ scope.row.create_date }}</span>
             </template>
           </el-table-column>
@@ -173,7 +173,7 @@
             width="200"
           >
 
-            <template slot-scope="scope" >
+            <template slot-scope="scope">
               <el-popover
                 placement="right"
                 width="400"
@@ -192,22 +192,22 @@
                     </el-carousel>
                   </template>
                   <el-form-item label="物品名称">
-                    <el-input v-model="scope.row.title" :disabled="true" />
+                    <el-input v-model="scope.row.title" :disabled="true"/>
                   </el-form-item>
                   <el-form-item label="描述">
-                    <el-input v-model="scope.row.description" type="textarea" :disabled="true" />
+                    <el-input v-model="scope.row.description" type="textarea" :disabled="true"/>
                   </el-form-item>
                   <el-form-item label="现价">
-                    <el-input v-model="scope.row.current_price" :disabled="true" />
+                    <el-input v-model="scope.row.current_price" :disabled="true"/>
                   </el-form-item>
                   <el-form-item label="原价">
-                    <el-input v-model="scope.row.old_price" :disabled="true" />
+                    <el-input v-model="scope.row.old_price" :disabled="true"/>
                   </el-form-item>
                   <el-form-item label="类别">
-                    <el-input :value="scope.row.category_one+'/'+scope.row.category_two" :disabled="true" />
+                    <el-input :value="scope.row.category_one+'/'+scope.row.category_two" :disabled="true"/>
                   </el-form-item>
                   <el-form-item label="标签">
-                    <el-input v-model="scope.row.tag" :disabled="true" />
+                    <el-input v-model="scope.row.tag" :disabled="true"/>
                   </el-form-item>
                 </el-form>
 
@@ -265,6 +265,7 @@
 
 <script>
 import { allGoods, removeGoods, updateGoods } from '@/api/goods'
+import { reduceUser } from '@/api/user'
 
 export default {
   name: 'Goods',
@@ -314,6 +315,8 @@ export default {
     handleDelete(row) {
       removeGoods(row.goods_id).then(res => {
         this.$message(res.msg)
+
+        reduceUser({ userId: row.user_id, num: 5 })
         this.loadData()
       })
     },

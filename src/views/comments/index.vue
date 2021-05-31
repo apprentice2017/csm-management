@@ -43,7 +43,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <i class="el-icon-time"/>
+              <i class="el-icon-time" />
               <span style="margin-left: 10px">{{ scope.row.create_date }}</span>
             </template>
           </el-table-column>
@@ -108,8 +108,7 @@
                 v-model="sensitive"
                 active-value="1"
                 inactive-value="0"
-              >
-              </el-switch>
+              />
             </template>
             <template slot-scope="scope">
               <el-button
@@ -160,6 +159,7 @@
 
 <script>
 import { allComments, removeComment } from '@/api/comments'
+import { reduceUser } from '@/api/user'
 
 export default {
   name: 'Comments',
@@ -179,13 +179,13 @@ export default {
       sensitive: null
     }
   },
-  beforeMount() {
-    this.loadData()
-  },
   watch: {
     sensitive: function(val) {
       this.loadData()
     }
+  },
+  beforeMount() {
+    this.loadData()
   },
   methods: {
     loadData() {
@@ -204,6 +204,7 @@ export default {
     handleDelete(row) {
       removeComment(row.comment_id).then(res => {
         this.$message(res.msg)
+        reduceUser({ userId: row.user_id, num: 3 })
         this.loadData()
       })
     },
